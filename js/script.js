@@ -16,7 +16,7 @@ function generateBookObject(id, title, author, year, isComplete) {
 }
 
 function findBook(bookId) {
-  for (bookItem of books) {
+  for (const bookItem of books) {
     if (bookItem.id === bookId) {
       return bookItem;
     }
@@ -25,7 +25,7 @@ function findBook(bookId) {
 }
 
 function findBookIndex(bookId) {
-  for (index in books) {
+  for (const index in books) {
     if (books[index].id === bookId) {
       return index;
     }
@@ -36,46 +36,61 @@ function findBookIndex(bookId) {
 function makeBook(bookObject) {
   const { id, title, author, year, isComplete } = bookObject;
 
+  // const checkBox = document.querySelector("inputBookIsComplete");
+  // checkBox.addEventListener("click", function () {
+  //   addBookToComplete(id);
+  // });
+
   const textTitle = document.createElement("h3");
   textTitle.innerText = title;
 
   const textAuthor = document.createElement("p");
-  textAuthor.innerText = author;
+  textAuthor.innerText = "Penulis : " + author;
 
   const textYear = document.createElement("p");
-  textYear.innerText = year;
+  textYear.innerText = "Tahun : " + year;
 
-  const textInputSection = document.createElement("div");
-  textInputSection.classList.add("InputSection");
-  textInputSection.append(textTitle, textAuthor, textYear);
+  const buttonInputSection = document.createElement("div");
+  buttonInputSection.classList.add("action");
 
-  const inputSection = document.createElement("div");
-  inputSection.classList.add("item", "input_section");
-  inputSection.append(textInputSection);
+  const inputSection = document.createElement("article");
+  inputSection.classList.add("book_item");
+  inputSection.append(textTitle, textAuthor, textYear);
+  inputSection.append(buttonInputSection);
   inputSection.setAttribute("id", `book-${id}`);
 
   if (isComplete) {
     const notCompleteButton = document.createElement("button");
     notCompleteButton.classList.add("green");
+    notCompleteButton.innerText = "Belum selesai dibaca";
     notCompleteButton.addEventListener("click", function () {
       removeBookFromComplete(id);
     });
 
     const deleteButton = document.createElement("button");
     deleteButton.classList.add("red");
+    deleteButton.innerText = "Hapus buku";
     deleteButton.addEventListener("click", function () {
       deleteBookFromComplete(id);
     });
 
-    inputSection.append(notCompleteButton, deleteButton);
+    buttonInputSection.append(notCompleteButton, deleteButton);
   } else {
     const completeButton = document.createElement("button");
     completeButton.classList.add("green");
+    completeButton.innerText = "Selesai dibaca";
     completeButton.addEventListener("click", function () {
       addBookToComplete(id);
     });
 
-    inputSection.append(completeButton);
+    const eraseButton = document.createElement("button");
+    eraseButton.classList.add("red");
+    eraseButton.innerText = "Hapus buku";
+    eraseButton.addEventListener("click", function () {
+      deleteBookFromComplete(id);
+    });
+
+    buttonInputSection.append(completeButton, eraseButton);
   }
 
   return inputSection;
@@ -98,6 +113,16 @@ function addBook() {
 
   document.dispatchEvent(new Event(RENDER_EVENT));
   saveData();
+}
+
+function searchBook() {
+  const searchBar = document
+    .form("searchBook")
+    .querySelector("searchBookTitle");
+
+  if (bookTitle == bookObject) {
+    return bookObject;
+  }
 }
 
 function addBookToComplete(bookId /* HTMLELement */) {
@@ -128,7 +153,7 @@ function removeBookFromComplete(bookId) {
 }
 
 document.addEventListener("DOMContentLoaded", function () {
-  const submitForm /* HTMLFormElement */ = document.getElementById("inputBook");
+  const submitForm = document.getElementById("inputBook");
 
   submitForm.addEventListener("submit", function (event) {
     event.preventDefault();
