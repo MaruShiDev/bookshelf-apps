@@ -33,13 +33,15 @@ function findBookIndex(bookId) {
   return -1;
 }
 
+function checkButton() {
+  const checkBox = document.querySelector("#inputBookIsComplete");
+  checkBox.addEventListener("checked", function () {
+    if (checkBox == isComplete) addBookToComplete(id);
+  });
+}
+
 function makeBook(bookObject) {
   const { id, title, author, year, isComplete } = bookObject;
-
-  // const checkBox = document.querySelector("inputBookIsComplete");
-  // checkBox.addEventListener("click", function () {
-  //   addBookToComplete(id);
-  // });
 
   const textTitle = document.createElement("h3");
   textTitle.innerText = title;
@@ -72,6 +74,7 @@ function makeBook(bookObject) {
     deleteButton.innerText = "Hapus buku";
     deleteButton.addEventListener("click", function () {
       deleteBookFromComplete(id);
+      alert("Yakin hapus dari daftar Selesai dibaca?");
     });
 
     buttonInputSection.append(notCompleteButton, deleteButton);
@@ -88,6 +91,7 @@ function makeBook(bookObject) {
     eraseButton.innerText = "Hapus buku";
     eraseButton.addEventListener("click", function () {
       deleteBookFromComplete(id);
+      alert("Yakin hapus dari daftar Belum selesai dibaca?");
     });
 
     buttonInputSection.append(completeButton, eraseButton);
@@ -100,14 +104,14 @@ function addBook() {
   const title = document.getElementById("inputBookTitle").value;
   const author = document.getElementById("inputBookAuthor").value;
   const year = document.getElementById("inputBookYear").value;
-
+  const isComplete = document.getElementById("inputBookIsComplete").checked;
   const generatedID = generateId();
   const bookObject = generateBookObject(
     generatedID,
     title,
     author,
     year,
-    false
+    isComplete
   );
   books.push(bookObject);
 
@@ -115,17 +119,25 @@ function addBook() {
   saveData();
 }
 
-function searchBook() {
-  const searchBar = document
-    .form("searchBook")
-    .querySelector("searchBookTitle");
+document
+  .getElementById("searchSubmit")
+  .addEventListener("click", function (event) {
+    event.preventDefault();
+    const searchBook = document
+      .getElementById("searchBookTitle")
+      .value.includes(books)
+      .toLowerCase();
+    const bookList = document.querySelectorAll(".book_item > h3");
+    for (const books of bookList) {
+      if (searchBook !== books.innerText.toLowerCase()) {
+        books.parentElement.style.display = "none";
+      } else {
+        books.parentElement.style.display = "block";
+      }
+    }
+  });
 
-  if (bookTitle == bookObject) {
-    return bookObject;
-  }
-}
-
-function addBookToComplete(bookId /* HTMLELement */) {
+function addBookToComplete(bookId) {
   const bookTarget = findBook(bookId);
   if (bookTarget == null) return;
 
@@ -134,7 +146,7 @@ function addBookToComplete(bookId /* HTMLELement */) {
   saveData();
 }
 
-function deleteBookFromComplete(bookId /* HTMLELement */) {
+function deleteBookFromComplete(bookId) {
   const bookTarget = findBookIndex(bookId);
   if (bookTarget === -1) return;
   books.splice(bookTarget, 1);
@@ -169,7 +181,6 @@ document.addEventListener(RENDER_EVENT, function () {
   const uncompleteBOOKList = document.getElementById("incompleteBookshelfList");
   const listComplete = document.getElementById("completeBookshelfList");
 
-  // clearing list item
   uncompleteBOOKList.innerHTML = "";
   listComplete.innerHTML = "";
 
@@ -194,7 +205,7 @@ function saveData() {
 const SAVED_EVENT = "saved-book";
 const STORAGE_KEY = "BOOK-APPS";
 
-function isStorageExist() /* boolean */ {
+function isStorageExist() {
   if (typeof Storage === undefined) {
     alert("Browser kamu tidak mendukung local storage");
     return false;
@@ -204,7 +215,6 @@ function isStorageExist() /* boolean */ {
 
 document.addEventListener(SAVED_EVENT, function () {
   console.log(localStorage.getItem(STORAGE_KEY));
-  // alert() = 'test';
 });
 
 function loadDataFromStorage() {
