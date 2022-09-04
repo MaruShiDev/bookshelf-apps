@@ -125,8 +125,7 @@ document
     event.preventDefault();
     const searchBook = document
       .getElementById("searchBookTitle")
-      .value.includes(books)
-      .toLowerCase();
+      .value.toLowerCase();
     const bookList = document.querySelectorAll(".book_item > h3");
     for (const books of bookList) {
       if (searchBook !== books.innerText.toLowerCase()) {
